@@ -1,41 +1,25 @@
 package com.binotify.helpers;
 
-import java.time.Instant;
+import org.apache.commons.dbcp2.BasicDataSource;
 
-import java.sql.DriverManager;
 import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBConnector {
-    private String url;
-    private String user;
-    private String password;
-    private Connection conn;
+    private static BasicDataSource ds = new BasicDataSource();
 
-    public DBConnector(String url, String user, String password) {
-        this.url = url;
-        this.user = user;
-        this.password = password;
+    static {
+        ds.setUrl("jdbc:mysql://localhost:3306/catifysoap");
+        ds.setUsername("root");
+        ds.setPassword("admin");
     }
 
-    public boolean startConnection() {
-        try {
-            Connection conn = DriverManager.getConnection(url, user, password);
-        } catch(SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+    public DBConnector() {}
 
-        return true;
+    public static Connection getConnection() throws SQLException {
+        return ds.getConnection();
     }
 
-    public boolean closeConnection() {
-        try {
-            conn.close();
-        } catch(SQLException e) {
-            return false;
-        }
-
-        return true;
-    }
 }

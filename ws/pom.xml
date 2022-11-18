@@ -44,6 +44,11 @@
       <artifactId>rt</artifactId>
       <version>2.3.2</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-dbcp2</artifactId>
+      <version>2.9.0</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -111,6 +116,14 @@
               </execution>
             </executions>
         </plugin>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <configuration>
+                  <source>8</source>
+                  <target>8</target>
+              </configuration>
+          </plugin>
       </plugins>
     <!-- </pluginManagement> -->
   </build>
