@@ -1,6 +1,7 @@
 package com.binotify.services;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.time.Instant;
 
 import javax.jws.WebService;
@@ -15,15 +16,14 @@ import com.sun.xml.ws.developer.JAXWSProperties;
 
 import javax.annotation.Resource;
 
-import com.binotify.models.RequestData;
-import com.binotify.models.SubscriptionData;
+import com.binotify.helpers.Logging;
 
 public class RequestReviewService {
     @Resource
     WebServiceContext wsContext;
     
     @WebMethod
-    public ArrayList<SubscriptionData> getSubscriptionRequests() {
+    public ArrayList<HashMap<String, String>> getSubscriptionRequests() {
         MessageContext msgContext = wsContext.getMessageContext();
         HttpExchange req = (HttpExchange) msgContext.get(JAXWSProperties.HTTP_EXCHANGE);
 
@@ -31,21 +31,21 @@ public class RequestReviewService {
         String endpoint = String.format("%s", req.getRequestURI());
         Instant timestamp = Instant.now();
 
-        RequestData reqData = new RequestData(ip, endpoint, timestamp, "Admin Requests to view subcription requests");
-
-        return new ArrayList<SubscriptionData>();
+        return new ArrayList<>();
     }
 
     @WebMethod
     public void approveSubscriptionRequest(
-        @WebParam(name = "subscriptionData") SubscriptionData suscriptionData
+        @WebParam(name = "subscriberId") Integer subscriberId,
+        @WebParam(name = "creatorId") Integer creatorId
     ) {
         return;
     }
 
     @WebMethod
     public void declineSubscriptionRequest(
-        @WebParam(name = "subscriptionData") SubscriptionData suscriptionData
+        @WebParam(name = "subscriberId") Integer subscriberId,
+        @WebParam(name = "creatorId") Integer creatorId
     ) {
         return;
     }
