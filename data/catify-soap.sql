@@ -1,135 +1,77 @@
+-- MySQL dump 10.13  Distrib 8.0.31, for Win64 (x86_64)
 --
--- PostgreSQL database dump
---
+-- Host: localhost    Database: catifysoap
+-- ------------------------------------------------------
+-- Server version	8.0.31
 
--- Dumped from database version 15.0
--- Dumped by pg_dump version 15.0
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
-
---
--- Name: sub_status; Type: TYPE; Schema: public; Owner: postgres
---
-
-CREATE TYPE public.sub_status AS ENUM (
-    'PENDING',
-    'ACCEPTED',
-    'REJECTED'
-);
-
-
-ALTER TYPE public.sub_status OWNER TO postgres;
-
-SET default_tablespace = '';
-
-SET default_table_access_method = heap;
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Name: Logging; Type: TABLE; Schema: public; Owner: postgres
+-- Table structure for table `logging`
 --
 
-CREATE TABLE public."Logging" (
-    id integer NOT NULL,
-    description character(256) NOT NULL,
-    ip character(16) NOT NULL,
-    endpoint character(256) NOT NULL,
-    requested_at timestamp without time zone NOT NULL
-);
-
-
-ALTER TABLE public."Logging" OWNER TO postgres;
-
---
--- Name: Logging_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public."Logging_id_seq"
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public."Logging_id_seq" OWNER TO postgres;
+DROP TABLE IF EXISTS `logging`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `logging` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `description` char(255) NOT NULL,
+  `ip` char(16) NOT NULL,
+  `endpoint` char(255) NOT NULL,
+  `requested_at` timestamp NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Name: Logging_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Dumping data for table `logging`
 --
 
-ALTER SEQUENCE public."Logging_id_seq" OWNED BY public."Logging".id;
-
-
---
--- Name: Subscription; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public."Subscription" (
-    creator_id integer NOT NULL,
-    subscriber_id integer NOT NULL,
-    status public.sub_status DEFAULT 'PENDING'::public.sub_status NOT NULL
-);
-
-
-ALTER TABLE public."Subscription" OWNER TO postgres;
+LOCK TABLES `logging` WRITE;
+/*!40000 ALTER TABLE `logging` DISABLE KEYS */;
+/*!40000 ALTER TABLE `logging` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
--- Name: Logging id; Type: DEFAULT; Schema: public; Owner: postgres
+-- Table structure for table `subscription`
 --
 
-ALTER TABLE ONLY public."Logging" ALTER COLUMN id SET DEFAULT nextval('public."Logging_id_seq"'::regclass);
-
-
---
--- Data for Name: Logging; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public."Logging" (id, description, ip, endpoint, requested_at) FROM stdin;
-\.
-
-
---
--- Data for Name: Subscription; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public."Subscription" (creator_id, subscriber_id, status) FROM stdin;
-\.
-
+DROP TABLE IF EXISTS `subscription`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `subscription` (
+  `creator_id` int NOT NULL,
+  `subscriber_id` int NOT NULL,
+  `status` enum('PENDING','ACCEPTED','REJECTED') NOT NULL DEFAULT 'PENDING',
+  PRIMARY KEY (`creator_id`,`subscriber_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Name: Logging_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Dumping data for table `subscription`
 --
 
-SELECT pg_catalog.setval('public."Logging_id_seq"', 1, false);
+LOCK TABLES `subscription` WRITE;
+/*!40000 ALTER TABLE `subscription` DISABLE KEYS */;
+/*!40000 ALTER TABLE `subscription` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
---
--- Name: Logging Logging_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."Logging"
-    ADD CONSTRAINT "Logging_pkey" PRIMARY KEY (id);
-
-
---
--- Name: Subscription Subscription_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."Subscription"
-    ADD CONSTRAINT "Subscription_pkey" PRIMARY KEY (creator_id, subscriber_id);
-
-
---
--- PostgreSQL database dump complete
---
-
+-- Dump completed on 2022-11-18 20:17:18
