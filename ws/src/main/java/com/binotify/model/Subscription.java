@@ -7,7 +7,8 @@ public class Subscription implements Serializable {
     private int subscriberId;
     private String status;
 
-    public Subscription() {}
+    public Subscription() {
+    }
 
     public int getCreatorId() {
         return creatorId;
