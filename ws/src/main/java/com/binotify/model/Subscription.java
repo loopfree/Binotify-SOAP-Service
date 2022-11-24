@@ -1,8 +1,7 @@
 package com.binotify.model;
 
-import java.io.Serializable;
 
-public class Subscription implements Serializable {
+public class Subscription {
     private int creatorId;
     private int subscriberId;
     private String status;

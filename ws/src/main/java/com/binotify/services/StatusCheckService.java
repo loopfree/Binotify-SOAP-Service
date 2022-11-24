@@ -1,5 +1,6 @@
 package com.binotify.services;
 
+import com.binotify.helpers.DBConnector;
 import com.binotify.model.Subscription;
 
 import javax.annotation.Resource;
@@ -17,52 +18,47 @@ import java.util.ArrayList;
 import com.binotify.helpers.Logger;
 
 @WebService
-public class StatusCheckService implements Logger{
+public class StatusCheckService {
     @Resource
     WebServiceContext wsContext;
-
-    public static Connection conn;    
 
     @WebMethod
     public String checkStatus(
             @WebParam(name = "subscriberId") int subscriberId,
             @WebParam(name = "creatorId") int creatorId
     ) {
-        Connection conn = StatusCheckService.conn;
-        String status = null;
         String query = "SELECT status FROM Subscription WHERE creator_id = ? AND subscriber_id = ?";
-
         try (
-            PreparedStatement pStatement = conn.prepareStatement(query)
-        ){
-            pStatement.setInt(1, subscriberId);
-            pStatement.setInt(2, creatorId);
-            ResultSet resultSet = pStatement.executeQuery();
+            Connection conn = DBConnector.getConnection();
+            PreparedStatement preparedStatement = conn.prepareStatement(query)
+        ) {
+            Logger.log(wsContext, "User requests for subscription status");
+            preparedStatement.setInt(1, subscriberId);
+            preparedStatement.setInt(2, creatorId);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.first()) {
-                status = resultSet.getString("status");
+                return resultSet.getString("status");
             }
             else {
-                status = "NONE";
+                return "NONE";
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
+            return null;
         }
 
-        Log(wsContext, conn, "User requests for subscription status");
-
-        return status;
     }
 
     @WebMethod
     public Subscription[] retrieveAllStatus() {
-        Subscription[] result = null;
-        Connection conn = StatusCheckService.conn;
-        
+        String query = "SELECT * FROM Subscription";
         try (
-            PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM Subscription")
-        ){
+            Connection conn = DBConnector.getConnection();
+            PreparedStatement preparedStatement = conn.prepareStatement(query)
+        ) {
+            Logger.log(wsContext, "Admin requests for all subscriptions");
             ArrayList<Subscription> subscriptionArrayList = new ArrayList<>();
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -71,17 +67,17 @@ public class StatusCheckService implements Logger{
                 s.setCreatorId(resultSet.getInt("creator_id"));
                 s.setSubscriberId(resultSet.getInt("subscriber_id"));
                 s.setStatus(resultSet.getString("status"));
+
                 subscriptionArrayList.add(s);
             }
 
-            result = subscriptionArrayList.toArray(new Subscription[0]);
+            return subscriptionArrayList.toArray(new Subscription[0]);
 
         } catch (SQLException e) {
             e.printStackTrace();
+            return null;
         }
 
-        Log(wsContext, conn, "Admin requests for all subscriptions");
-
-        return result;
     }
+
 }

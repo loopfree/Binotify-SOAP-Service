@@ -14,48 +14,42 @@ import javax.xml.ws.WebServiceContext;
 
 import javax.annotation.Resource;
 
+import com.binotify.helpers.DBConnector;
 import com.binotify.helpers.Logger;
 import com.binotify.model.Subscription;
 
 @WebService
-public class RequestReviewService implements Logger{
+public class RequestReviewService {
     @Resource
     WebServiceContext wsContext;
-    
-    public static Connection conn;
+
     
     @WebMethod
     public Subscription[] getSubscriptionRequests() {
-        Connection conn = RequestReviewService.conn;
         String query = "SELECT * FROM Subscription WHERE status = 'PENDING';";
-
-        ArrayList<Subscription> result = new ArrayList<>();
-
-        try(
+        try (
+            Connection conn = DBConnector.getConnection();
             PreparedStatement pStatement = conn.prepareStatement(query)
         ) {
-            ArrayList<Subscription> temp = new ArrayList<>();
-            
+            Logger.log(wsContext, "Admin requests PENDING subscription");
+            ArrayList<Subscription> subscriptionArrayList = new ArrayList<>();
             ResultSet resultSet = pStatement.executeQuery();
 
-            while(resultSet.next()) {
+            while (resultSet.next()) {
                 Subscription s = new Subscription();
                 s.setCreatorId(resultSet.getInt("creator_id"));
                 s.setSubscriberId(resultSet.getInt("subscriber_id"));
                 s.setStatus(resultSet.getString("status"));
                 
-                temp.add(s);
+                subscriptionArrayList.add(s);
             }
 
-            result = temp;
+            return subscriptionArrayList.toArray(new Subscription[0]);
 
         } catch(SQLException e) {
             e.printStackTrace();
+            return null;
         }
-
-        Log(wsContext, conn, "Admin requests PENDING subscription");
-
-        return result.toArray(new Subscription[0]); 
     }
 
     @WebMethod
@@ -63,26 +57,20 @@ public class RequestReviewService implements Logger{
         @WebParam(name = "subscriberId") Integer subscriberId,
         @WebParam(name = "creatorId") Integer creatorId
     ) {
-        Connection conn = RequestReviewService.conn;
-
         String query = "UPDATE Subscription SET status = 'ACCEPTED' WHERE creator_id = ? AND subscriber_id = ?;";
 
-        try(
+        try (
+            Connection conn = DBConnector.getConnection();
             PreparedStatement pStatement = conn.prepareStatement(query)
         ) {
-
+            Logger.log(wsContext, "Admin approves subscription request");
             pStatement.setInt(1, creatorId);
             pStatement.setInt(2, subscriberId);
-
             pStatement.execute();
 
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        Log(wsContext, conn, "Admin approves subscription request");
-
-        return;
     }
 
     @WebMethod
@@ -90,25 +78,18 @@ public class RequestReviewService implements Logger{
         @WebParam(name = "subscriberId") Integer subscriberId,
         @WebParam(name = "creatorId") Integer creatorId
     ) {
-        Connection conn = RequestReviewService.conn;
-
         String query = "UPDATE Subscription SET status = 'REJECTED' WHERE creator_id = ? AND subscriber_id = ?;";
-
-        try(
+        try (
+            Connection conn = DBConnector.getConnection();
             PreparedStatement pStatement = conn.prepareStatement(query)
         ) {
-
+            Logger.log(wsContext, "Admin declined subscription request");
             pStatement.setInt(1, creatorId);
             pStatement.setInt(2, subscriberId);
-
             pStatement.execute();
 
         } catch(SQLException e) {
             e.printStackTrace();
         }
-
-        Log(wsContext, conn, "Admin declined subscription request");
-
-        return;
     }
 }

@@ -12,25 +12,20 @@ import javax.xml.ws.WebServiceContext;
 
 import javax.annotation.Resource;
 
+import com.binotify.helpers.DBConnector;
 import com.binotify.helpers.Logger;
 
 @WebService
-public class SubscriptionRequestService implements Logger{
-
+public class SubscriptionRequestService {
     @Resource
     WebServiceContext wsContext;
-
-    public static Connection conn;
     
     @WebMethod
     public boolean requestSubscription(
         @WebParam(name = "subscriberId") Integer subscriberId,
         @WebParam(name = "creatorId") Integer creatorId
     ) {
-
-        Log(wsContext, conn, "User requests for subscription");
-
-        if(subscriberId == null || creatorId == null) {
+        if (subscriberId == null || creatorId == null) {
             return false;
         }
 
@@ -38,25 +33,22 @@ public class SubscriptionRequestService implements Logger{
     }
 
     public boolean addSubscriptionPending(Integer subscriberId, Integer creatorId) {
-        Connection conn = SubscriptionRequestService.conn;
-
-        boolean result;
-
-        try(
-            PreparedStatement stmtInsert = conn.prepareStatement("INSERT INTO Subscription VALUES ( ?, ?, 'PENDING' );")
+        String query = "INSERT INTO Subscription VALUES (?, ?, 'PENDING');";
+        try (
+            Connection conn = DBConnector.getConnection();
+            PreparedStatement stmtInsert = conn.prepareStatement(query)
         ) {
+            Logger.log(wsContext, "User requests for subscription");
             stmtInsert.setInt(1, subscriberId);
             stmtInsert.setInt(2, creatorId);
-
             stmtInsert.execute();
+
+            return true;
+
         } catch(SQLException e) {
             e.printStackTrace();
 
-            result = false;
+            return false;
         }
-
-        result = true;
-
-        return result;
     }
 }
