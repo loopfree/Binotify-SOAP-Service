@@ -2,6 +2,7 @@ package com.binotify.services;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.jws.WebService;
@@ -28,27 +29,72 @@ public class SubscriptionRequestService {
         if (subscriberId == null || creatorId == null) {
             return false;
         }
+        Logger.log(wsContext, "User requests for subscription");
 
         return addSubscriptionPending(subscriberId, creatorId);
     }
 
     public boolean addSubscriptionPending(Integer subscriberId, Integer creatorId) {
-        String query = "INSERT INTO Subscription VALUES (?, ?, 'PENDING');";
-        try (
+        boolean colExist = checkColumnExist(subscriberId, creatorId);
+
+        if(colExist) {
+            String query = "UPDATE Subscription SET status = 'PENDING' WHERE creator_id = ? AND subscriber_id = ?";
+            try (
+                Connection conn = DBConnector.getConnection();
+                PreparedStatement stmtInsert = conn.prepareStatement(query)
+            ) {
+                stmtInsert.setInt(1, creatorId);
+                stmtInsert.setInt(2, subscriberId);
+                stmtInsert.execute();
+
+                return true;
+
+            } catch(SQLException e) {
+                e.printStackTrace();
+
+                return false;
+            }
+        } else {
+            String query = "INSERT INTO Subscription VALUES (?, ?, 'PENDING');";
+            try (
+                Connection conn = DBConnector.getConnection();
+                PreparedStatement stmtInsert = conn.prepareStatement(query)
+            ) {
+                stmtInsert.setInt(1, creatorId);
+                stmtInsert.setInt(2, subscriberId);
+                stmtInsert.execute();
+
+                return true;
+
+            } catch(SQLException e) {
+                e.printStackTrace();
+
+                return false;
+            }
+        }
+
+    }
+
+    public boolean checkColumnExist(Integer subscriberId, Integer creatorId) {
+        boolean exists = false;
+        String query = "SELECT status FROM Subscription WHERE creator_id = ? AND subscriber_id = ?;";
+        try(
             Connection conn = DBConnector.getConnection();
-            PreparedStatement stmtInsert = conn.prepareStatement(query)
+            PreparedStatement pStatement = conn.prepareStatement(query)
         ) {
-            Logger.log(wsContext, "User requests for subscription");
-            stmtInsert.setInt(1, subscriberId);
-            stmtInsert.setInt(2, creatorId);
-            stmtInsert.execute();
+            pStatement.setInt(1, creatorId);
+            pStatement.setInt(2, subscriberId);
+            ResultSet rs = pStatement.executeQuery();
 
-            return true;
-
+            if(rs.next()) {
+                exists = true;
+            }
         } catch(SQLException e) {
             e.printStackTrace();
 
-            return false;
+            exists =  false;
         }
+
+        return exists;
     }
 }

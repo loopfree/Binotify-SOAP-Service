@@ -9,7 +9,7 @@ public class DBConnector {
     private static final BasicDataSource ds = new BasicDataSource();
 
     static {
-        ds.setUrl("jdbc:mysql://localhost:3306/catifysoap");
+        ds.setUrl("jdbc:mysql://localhost:3306/Binotify");
         ds.setUsername("root");
         ds.setPassword("admin");
     }
