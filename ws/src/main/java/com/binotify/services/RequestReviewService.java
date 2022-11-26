@@ -1,5 +1,9 @@
 package com.binotify.services;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,10 +24,11 @@ import com.binotify.model.Subscription;
 
 @WebService
 public class RequestReviewService {
+    private static final URI receiverEndpoint = URI.create("localhost:8080/server/endpoint/subscription_callback.php");
+
     @Resource
     WebServiceContext wsContext;
 
-    
     @WebMethod
     public Subscription[] getSubscriptionRequests() {
         String query = "SELECT * FROM Subscription WHERE status = 'PENDING';";
@@ -70,7 +75,18 @@ public class RequestReviewService {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            return;
         }
+
+        String requestBody = String.format("{\"creatorId\": %d, \"subscriberId\": %d, \"status\": \"ACCEPTED\"}",
+                                           creatorId, subscriberId);
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(receiverEndpoint)
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
+
+        client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 
     @WebMethod
@@ -90,6 +106,17 @@ public class RequestReviewService {
 
         } catch(SQLException e) {
             e.printStackTrace();
+            return;
         }
+
+        String requestBody = String.format("{\"creatorId\": %d, \"subscriberId\": %d, \"status\": \"REJECTED\"}",
+                creatorId, subscriberId);
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(receiverEndpoint)
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
+
+        client.sendAsync(request, HttpResponse.BodyHandlers.ofString());
     }
 }
