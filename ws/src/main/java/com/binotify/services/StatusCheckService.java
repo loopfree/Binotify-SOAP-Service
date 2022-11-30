@@ -27,7 +27,7 @@ public class StatusCheckService {
             @WebParam(name = "subscriberId") int subscriberId,
             @WebParam(name = "creatorId") int creatorId
     ) {
-        String query = "SELECT status FROM Subscription WHERE creator_id = ? AND subscriber_id = ?";
+        String query = "SELECT status FROM subscription WHERE creator_id = ? AND subscriber_id = ?";
         try (
             Connection conn = DBConnector.getConnection();
             PreparedStatement preparedStatement = conn.prepareStatement(query)
@@ -53,7 +53,7 @@ public class StatusCheckService {
 
     @WebMethod
     public Subscription[] retrieveAllStatus() {
-        String query = "SELECT * FROM Subscription";
+        String query = "SELECT * FROM subscription";
         try (
             Connection conn = DBConnector.getConnection();
             PreparedStatement preparedStatement = conn.prepareStatement(query)

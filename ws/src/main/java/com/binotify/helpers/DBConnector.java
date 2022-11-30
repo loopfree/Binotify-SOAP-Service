@@ -9,6 +9,7 @@ public class DBConnector {
     private static final BasicDataSource ds = new BasicDataSource();
 
     static {
+        ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
         ds.setUrl("jdbc:mysql://db-catify-soap:3306/catifysoap");
         ds.setUsername("root");
         ds.setPassword("admin");

@@ -31,7 +31,7 @@ public class RequestReviewService {
 
     @WebMethod
     public Subscription[] getSubscriptionRequests() {
-        String query = "SELECT * FROM Subscription WHERE status = 'PENDING';";
+        String query = "SELECT * FROM subscription WHERE status = 'PENDING';";
         try (
             Connection conn = DBConnector.getConnection();
             PreparedStatement pStatement = conn.prepareStatement(query)
@@ -62,7 +62,7 @@ public class RequestReviewService {
         @WebParam(name = "subscriberId") Integer subscriberId,
         @WebParam(name = "creatorId") Integer creatorId
     ) {
-        String query = "UPDATE Subscription SET status = 'ACCEPTED' WHERE creator_id = ? AND subscriber_id = ?;";
+        String query = "UPDATE subscription SET status = 'ACCEPTED' WHERE creator_id = ? AND subscriber_id = ?;";
 
         try (
             Connection conn = DBConnector.getConnection();
@@ -94,7 +94,7 @@ public class RequestReviewService {
         @WebParam(name = "subscriberId") Integer subscriberId,
         @WebParam(name = "creatorId") Integer creatorId
     ) {
-        String query = "UPDATE Subscription SET status = 'REJECTED' WHERE creator_id = ? AND subscriber_id = ?;";
+        String query = "UPDATE subscription SET status = 'REJECTED' WHERE creator_id = ? AND subscriber_id = ?;";
         try (
             Connection conn = DBConnector.getConnection();
             PreparedStatement pStatement = conn.prepareStatement(query)

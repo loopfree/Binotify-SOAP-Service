@@ -19,15 +19,15 @@ public class Logger {
         MessageContext msgContext = wsContext.getMessageContext();
         HttpExchange req = (HttpExchange) msgContext.get(JAXWSProperties.HTTP_EXCHANGE);
 
-        String ip = String.format("%s", req.getRemoteAddress());
+        String ip = String.format("%s", req.getRemoteAddress().getAddress());
         System.out.println(ip);
         String endpoint = String.format("%s", req.getRequestURI());
         Instant timestamp = Instant.now();
 
-        String query = "INSERT INTO Logging (description, ip, endpoint, requested_at) VALUES (?, ?, ?, ?);";
+        String query = "INSERT INTO logging (description, ip, endpoint, requested_at) VALUES (?, ?, ?, ?);";
         try (
             Connection conn = DBConnector.getConnection();
-            PreparedStatement stmtInsert = conn.prepareStatement(query);
+            PreparedStatement stmtInsert = conn.prepareStatement(query)
         ) {
             stmtInsert.setString(1, description);
             stmtInsert.setString(2, ip);
