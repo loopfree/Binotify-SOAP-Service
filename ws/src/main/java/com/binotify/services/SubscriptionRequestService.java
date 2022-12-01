@@ -19,7 +19,7 @@ import com.binotify.helpers.DBConnector;
 import com.binotify.helpers.Logger;
 
 @WebService
-@HandlerChain(file="handler-chain.xml")
+//@HandlerChain(file="handler-chain.xml")
 public class SubscriptionRequestService {
     @Resource
     WebServiceContext wsContext;
@@ -41,7 +41,7 @@ public class SubscriptionRequestService {
         boolean colExist = checkColumnExist(subscriberId, creatorId);
 
         if(colExist) {
-            String query = "UPDATE subscription SET status = 'PENDING' WHERE creator_id = ? AND subscriber_id = ?";
+            String query = "UPDATE subscription SET status = 'PENDING', is_polled = FALSE WHERE creator_id = ? AND subscriber_id = ?;";
             try (
                 Connection conn = DBConnector.getConnection();
                 PreparedStatement stmtInsert = conn.prepareStatement(query)
@@ -58,7 +58,7 @@ public class SubscriptionRequestService {
                 return false;
             }
         } else {
-            String query = "INSERT INTO subscription VALUES (?, ?, 'PENDING');";
+            String query = "INSERT INTO subscription VALUES (?, ?, 'PENDING', FALSE);";
             try (
                 Connection conn = DBConnector.getConnection();
                 PreparedStatement stmtInsert = conn.prepareStatement(query)
