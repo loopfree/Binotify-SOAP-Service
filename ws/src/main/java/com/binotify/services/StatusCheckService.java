@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import com.binotify.helpers.Logger;
 
 @WebService
-//@HandlerChain(file="handler-chain.xml")
+@HandlerChain(file="handler-chain.xml")
 public class StatusCheckService {
     @Resource
     WebServiceContext wsContext;
