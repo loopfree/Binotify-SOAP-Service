@@ -10,6 +10,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.jws.HandlerChain;
+
 import javax.jws.WebService;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -23,6 +25,7 @@ import com.binotify.helpers.Logger;
 import com.binotify.model.Subscription;
 
 @WebService
+@HandlerChain(file="handler-chain.xml")
 public class RequestReviewService {
     private static final URI receiverEndpoint = URI.create("localhost:8080/server/endpoint/subscription_callback.php");
 

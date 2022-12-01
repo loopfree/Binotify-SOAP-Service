@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.jws.HandlerChain;
+
 import javax.jws.WebService;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -17,6 +19,7 @@ import com.binotify.helpers.DBConnector;
 import com.binotify.helpers.Logger;
 
 @WebService
+@HandlerChain(file="handler-chain.xml")
 public class SubscriptionRequestService {
     @Resource
     WebServiceContext wsContext;

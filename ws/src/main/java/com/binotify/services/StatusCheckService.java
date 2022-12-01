@@ -3,6 +3,8 @@ package com.binotify.services;
 import com.binotify.helpers.DBConnector;
 import com.binotify.model.Subscription;
 
+import javax.jws.HandlerChain;
+
 import javax.annotation.Resource;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 import com.binotify.helpers.Logger;
 
 @WebService
+@HandlerChain(file="handler-chain.xml")
 public class StatusCheckService {
     @Resource
     WebServiceContext wsContext;
