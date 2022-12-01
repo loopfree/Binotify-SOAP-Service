@@ -20,6 +20,8 @@ public class App
         Endpoint.publish(baseUrl + "request", new SubscriptionRequestService());
         System.out.println("Endpoint for request started");
 
+        System.out.println("Server started on " + baseUrl);
+
         while(true);
 
     }
