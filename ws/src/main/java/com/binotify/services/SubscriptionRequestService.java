@@ -5,7 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import javax.jws.HandlerChain;
+// import javax.jws.HandlerChain;
 
 import javax.jws.WebService;
 import javax.jws.WebMethod;
@@ -19,16 +19,26 @@ import com.binotify.helpers.DBConnector;
 import com.binotify.helpers.Logger;
 
 @WebService
-@HandlerChain(file="handler-chain.xml")
+// @HandlerChain(file="handler-chain.xml")
 public class SubscriptionRequestService {
     @Resource
     WebServiceContext wsContext;
     
     @WebMethod
     public boolean requestSubscription(
+        @WebParam(name = "apiKey") String apiKey,
         @WebParam(name = "subscriberId") Integer subscriberId,
         @WebParam(name = "creatorId") Integer creatorId
     ) {
+        if (apiKey.equals(System.getenv("API_KEY_PLAIN"))) {
+            System.out.println("Binotify App API Key is valid");
+        } else if (apiKey.equals(System.getenv("API_KEY_REST"))) {
+            System.out.println("Binotify REST API Key is valid");
+        } else {
+            System.out.println("API Key is invalid");
+            return false;
+        }
+
         if (subscriberId == null || creatorId == null) {
             return false;
         }

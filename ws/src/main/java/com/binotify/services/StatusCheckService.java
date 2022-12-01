@@ -3,7 +3,7 @@ package com.binotify.services;
 import com.binotify.helpers.DBConnector;
 import com.binotify.model.Subscription;
 
-import javax.jws.HandlerChain;
+// import javax.jws.HandlerChain;
 
 import javax.annotation.Resource;
 import javax.jws.WebMethod;
@@ -20,16 +20,26 @@ import java.util.ArrayList;
 import com.binotify.helpers.Logger;
 
 @WebService
-@HandlerChain(file="handler-chain.xml")
+// @HandlerChain(file="handler-chain.xml")
 public class StatusCheckService {
     @Resource
     WebServiceContext wsContext;
 
     @WebMethod
     public String checkStatus(
-            @WebParam(name = "subscriberId") int subscriberId,
-            @WebParam(name = "creatorId") int creatorId
+        @WebParam(name = "apiKey") String apiKey,
+        @WebParam(name = "subscriberId") int subscriberId,
+        @WebParam(name = "creatorId") int creatorId
     ) {
+        if (apiKey.equals(System.getenv("API_KEY_PLAIN"))) {
+            System.out.println("Binotify App API Key is valid");
+        } else if (apiKey.equals(System.getenv("API_KEY_REST"))) {
+            System.out.println("Binotify REST API Key is valid");
+        } else {
+            System.out.println("API Key is invalid");
+            return null;
+        }
+
         String query = "SELECT status FROM subscription WHERE creator_id = ? AND subscriber_id = ?;";
         try (
             Connection conn = DBConnector.getConnection();

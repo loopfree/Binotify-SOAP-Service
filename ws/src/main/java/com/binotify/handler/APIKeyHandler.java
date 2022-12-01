@@ -10,6 +10,8 @@ import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
+import org.w3c.dom.NodeList;
+
 public class APIKeyHandler implements SOAPHandler<SOAPMessageContext> {
     @Override
     public boolean handleMessage(SOAPMessageContext context) throws RuntimeException {
@@ -25,13 +27,14 @@ public class APIKeyHandler implements SOAPHandler<SOAPMessageContext> {
                         
                 //if no header, add one
                 if (soapHeader == null){
-                    soapHeader = soapEnv.addHeader();
+                    // soapHeader = soapEnv.addHeader();
                     //throw exception
                     throw new RuntimeException("No SOAP header.");
                 }
 
                 //Get client API key from SOAP header
-                String apiKey = soapHeader.getAttribute("APIKey");
+                NodeList apiKeyNode = soapHeader.getElementsByTagNameNS("*", "APIKey");
+                String apiKey = apiKeyNode.item(0).getChildNodes().item(0).getNodeValue();
                 //if no header block for next actor found? throw exception
                 if (apiKey == null){
                     throw new RuntimeException("No header block for API key.");
