@@ -25,7 +25,7 @@ import com.binotify.helpers.Logger;
 import com.binotify.model.Subscription;
 
 @WebService
-//@HandlerChain(file="handler-chain.xml")
+@HandlerChain(file="handler-chain.xml")
 public class RequestReviewService {
     private static final URI receiverEndpoint = URI.create("catify-app:8080/server/endpoint/subscription_callback.php");
 

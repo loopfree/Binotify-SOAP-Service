@@ -19,7 +19,7 @@ import com.binotify.helpers.DBConnector;
 import com.binotify.helpers.Logger;
 
 @WebService
-//@HandlerChain(file="handler-chain.xml")
+@HandlerChain(file="handler-chain.xml")
 public class SubscriptionRequestService {
     @Resource
     WebServiceContext wsContext;
