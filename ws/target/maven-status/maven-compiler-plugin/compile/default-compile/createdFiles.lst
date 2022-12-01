@@ -1,0 +1,8 @@
+com/binotify/App.class
+com/binotify/services/RequestReviewService.class
+com/binotify/services/StatusCheckService.class
+com/binotify/helpers/DBConnector.class
+com/binotify/handler/APIKeyHandler.class
+com/binotify/helpers/Logger.class
+com/binotify/services/SubscriptionRequestService.class
+com/binotify/model/Subscription.class
