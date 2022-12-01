@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import com.binotify.helpers.Logger;
 
 @WebService
-@HandlerChain(file="handler-chain.xml")
+//@HandlerChain(file="handler-chain.xml")
 public class StatusCheckService {
     @Resource
     WebServiceContext wsContext;
@@ -30,7 +30,7 @@ public class StatusCheckService {
             @WebParam(name = "subscriberId") int subscriberId,
             @WebParam(name = "creatorId") int creatorId
     ) {
-        String query = "SELECT status FROM subscription WHERE creator_id = ? AND subscriber_id = ?";
+        String query = "SELECT status FROM subscription WHERE creator_id = ? AND subscriber_id = ?;";
         try (
             Connection conn = DBConnector.getConnection();
             PreparedStatement preparedStatement = conn.prepareStatement(query)
@@ -56,7 +56,7 @@ public class StatusCheckService {
 
     @WebMethod
     public Subscription[] retrieveAllStatus() {
-        String query = "SELECT * FROM subscription";
+        String query = "SELECT * FROM subscription WHERE is_polled = FALSE;";
         try (
             Connection conn = DBConnector.getConnection();
             PreparedStatement preparedStatement = conn.prepareStatement(query)
@@ -73,6 +73,10 @@ public class StatusCheckService {
 
                 subscriptionArrayList.add(s);
             }
+
+            String updateQuery = "UPDATE subscription SET is_polled = TRUE WHERE is_polled = FALSE";
+            PreparedStatement updateStatement = conn.prepareStatement(updateQuery);
+            updateStatement.executeQuery();
 
             return subscriptionArrayList.toArray(new Subscription[0]);
 

@@ -25,9 +25,9 @@ import com.binotify.helpers.Logger;
 import com.binotify.model.Subscription;
 
 @WebService
-@HandlerChain(file="handler-chain.xml")
+//@HandlerChain(file="handler-chain.xml")
 public class RequestReviewService {
-    private static final URI receiverEndpoint = URI.create("localhost:8080/server/endpoint/subscription_callback.php");
+    private static final URI receiverEndpoint = URI.create("catify-app:8080/server/endpoint/subscription_callback.php");
 
     @Resource
     WebServiceContext wsContext;
@@ -65,7 +65,7 @@ public class RequestReviewService {
         @WebParam(name = "subscriberId") Integer subscriberId,
         @WebParam(name = "creatorId") Integer creatorId
     ) {
-        String query = "UPDATE subscription SET status = 'ACCEPTED' WHERE creator_id = ? AND subscriber_id = ?;";
+        String query = "UPDATE subscription SET status = 'ACCEPTED', is_polled = FALSE WHERE creator_id = ? AND subscriber_id = ?;";
 
         try (
             Connection conn = DBConnector.getConnection();
@@ -97,7 +97,7 @@ public class RequestReviewService {
         @WebParam(name = "subscriberId") Integer subscriberId,
         @WebParam(name = "creatorId") Integer creatorId
     ) {
-        String query = "UPDATE subscription SET status = 'REJECTED' WHERE creator_id = ? AND subscriber_id = ?;";
+        String query = "UPDATE subscription SET status = 'REJECTED', is_polled = FALSE WHERE creator_id = ? AND subscriber_id = ?;";
         try (
             Connection conn = DBConnector.getConnection();
             PreparedStatement pStatement = conn.prepareStatement(query)
