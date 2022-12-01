@@ -41,7 +41,7 @@ public class SubscriptionRequestService {
         boolean colExist = checkColumnExist(subscriberId, creatorId);
 
         if(colExist) {
-            String query = "UPDATE subscription SET status = 'PENDING', is_polled = FALSE WHERE creator_id = ? AND subscriber_id = ?;";
+            String query = "UPDATE subscription SET status = 'PENDING', is_polled = 0 WHERE creator_id = ? AND subscriber_id = ?;";
             try (
                 Connection conn = DBConnector.getConnection();
                 PreparedStatement stmtInsert = conn.prepareStatement(query)
@@ -58,7 +58,7 @@ public class SubscriptionRequestService {
                 return false;
             }
         } else {
-            String query = "INSERT INTO subscription VALUES (?, ?, 'PENDING', FALSE);";
+            String query = "INSERT INTO subscription VALUES (?, ?, 'PENDING', 0);";
             try (
                 Connection conn = DBConnector.getConnection();
                 PreparedStatement stmtInsert = conn.prepareStatement(query)

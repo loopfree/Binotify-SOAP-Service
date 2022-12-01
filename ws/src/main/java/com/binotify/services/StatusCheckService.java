@@ -56,10 +56,13 @@ public class StatusCheckService {
 
     @WebMethod
     public Subscription[] retrieveAllStatus() {
-        String query = "SELECT * FROM subscription WHERE is_polled = FALSE;";
+        String query = "SELECT * FROM subscription WHERE is_polled = 0;";
+        String updateQuery = "UPDATE subscription SET is_polled = 1;";
+
         try (
             Connection conn = DBConnector.getConnection();
-            PreparedStatement preparedStatement = conn.prepareStatement(query)
+            PreparedStatement preparedStatement = conn.prepareStatement(query);
+            PreparedStatement updateStatement = conn.prepareStatement(updateQuery)
         ) {
             Logger.log(wsContext, "Admin requests for all subscriptions");
             ArrayList<Subscription> subscriptionArrayList = new ArrayList<>();
@@ -74,9 +77,6 @@ public class StatusCheckService {
                 subscriptionArrayList.add(s);
             }
 
-            String updateQuery = "UPDATE subscription SET is_polled = TRUE WHERE is_polled = FALSE";
-            PreparedStatement updateStatement = conn.prepareStatement(updateQuery);
-            updateStatement.executeQuery();
 
             return subscriptionArrayList.toArray(new Subscription[0]);
 

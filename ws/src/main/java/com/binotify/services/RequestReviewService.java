@@ -65,7 +65,7 @@ public class RequestReviewService {
         @WebParam(name = "subscriberId") Integer subscriberId,
         @WebParam(name = "creatorId") Integer creatorId
     ) {
-        String query = "UPDATE subscription SET status = 'ACCEPTED', is_polled = FALSE WHERE creator_id = ? AND subscriber_id = ?;";
+        String query = "UPDATE subscription SET status = 'ACCEPTED', is_polled = 0 WHERE creator_id = ? AND subscriber_id = ?;";
 
         try (
             Connection conn = DBConnector.getConnection();
