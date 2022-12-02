@@ -46,11 +46,12 @@ public class StatusCheckService {
             PreparedStatement preparedStatement = conn.prepareStatement(query)
         ) {
             Logger.log(wsContext, "User requests for subscription status");
-            preparedStatement.setInt(1, subscriberId);
-            preparedStatement.setInt(2, creatorId);
+            preparedStatement.setInt(1, creatorId);
+            preparedStatement.setInt(2, subscriberId);
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            if (resultSet.first()) {
+            if (resultSet.next()) {
+                System.out.println("Ran");
                 return resultSet.getString("status");
             }
             else {
