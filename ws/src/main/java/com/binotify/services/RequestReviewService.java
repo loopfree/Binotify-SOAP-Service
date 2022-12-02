@@ -27,12 +27,13 @@ import com.binotify.model.Subscription;
 @WebService
 // @HandlerChain(file="handler-chain.xml")
 public class RequestReviewService {
-    private static final URI receiverEndpoint = URI.create("catify-app:8080/server/endpoint/subscription_callback.php");
+    private static final URI receiverEndpoint = URI.create("http://catify-app:80/server/endpoint/subscription_callback.php");
 
     @Resource
     WebServiceContext wsContext;
 
     @WebMethod
+    
     public Subscription[] getSubscriptionRequests(@WebParam(name = "apiKey") String apiKey) {
         if (apiKey.equals(System.getenv("API_KEY_PLAIN"))) {
             System.out.println("Binotify App API Key is valid");
